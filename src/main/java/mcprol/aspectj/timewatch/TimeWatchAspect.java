@@ -29,7 +29,7 @@ public class TimeWatchAspect {
         Instant end = Instant.now();
         
         long timeElapsed = Duration.between(start, end).toMillis();
-        logger.info("TimeWatch: {} at {} takes {} ms", pjp.toShortString(), pjp.getSourceLocation(), timeElapsed);
+        logger.info("TimeWatch: {} at {} takes {} ms BATATA  ", pjp.toShortString(), pjp.getSourceLocation(), timeElapsed);
         
         return retValue;
     }

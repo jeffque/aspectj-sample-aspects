@@ -42,5 +42,15 @@ public class DummyCounterTest
     {
         int actual = sut.add(11);
         assertEquals(DummyCounter.LIMIT, actual);
+        // System.out.println(actual);
+    }
+
+    @Test
+    public void runRandom()
+    {
+        int actual = sut.random(11, 12, 3);
+        System.out.println(actual);
+        // assertEquals(DummyCounter.LIMIT, actual);
+        // System.out.println(actual);
     }
 }

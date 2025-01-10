@@ -6,3 +6,12 @@ Java AspectJ samples
 **TimeWatch** is an annotation that takes time execution for the annotated method
 
 
+## Computaria blog post related stuff
+
+Execute **DummyAspect** as main class. Eg:
+
+```bash
+> mvn clean compile exec:java -Dexec.mainClass=mcprol.aspectj.dummy.DummyCounter
+```
+
+It will show the argument passed annotated with `DummyAnnotation`.

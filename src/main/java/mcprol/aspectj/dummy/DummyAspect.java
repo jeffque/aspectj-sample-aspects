@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,35 @@ public class DummyAspect {
 
     @Pointcut("execution(int mcprol.aspectj.dummy.DummyCounter.add(int))") 
     public void callToAddMethod() {}
+
+    @Pointcut("within(@DummyAnnotationClass *) && execution(* *(..))") 
+    public void callToRandomMethod() {}
+
+    @Around("callToRandomMethod()")
+    public Object aroundRandom(ProceedingJoinPoint pjp) throws Throwable {
+        System.out.println("hey!!!");
+        DummyCounter counter = (DummyCounter)pjp.getTarget();
+
+        if (pjp.getSignature() instanceof MethodSignature sig) {
+            System.out.println(sig);
+            final var method = sig.getMethod();
+            final var annotations = method.getParameterAnnotations();
+            for (int i = 0; i < annotations.length; i++) {
+                final var annotation = annotations[i];
+                if (annotation.length > 0) {
+                    for (final var varAnnotation: annotation) {
+                        if (varAnnotation instanceof DummyAnnotation) {
+                            int dummyValue = (int) pjp.getArgs()[i];
+                            System.out.println("dummy value: " + dummyValue);
+                        }
+                    }
+                }
+            }
+        }
+        dumpJoinPoint(pjp);
+        
+        return pjp.proceed(pjp.getArgs());
+    }
 
     @Before("callToAddMethod()")
     public void before(JoinPoint jp) throws Throwable {
@@ -37,6 +67,15 @@ public class DummyAspect {
         int inc = (int) pjp.getArgs()[0];
         
         logger.info("Running DummyCounter.add() with values DummyCounter={}, inc={}, value={}", counter, inc, counter.value);
+
+        if (pjp.getSignature() instanceof MethodSignature sig) {
+            System.out.println(sig);
+            final var method = sig.getMethod();
+            var annotations = method.getParameterAnnotations();
+            System.out.println(annotations.length);
+        }
+        // final var sig = (MethodSignature) pjp.getSignature();
+        // System.out.println(sig);
         dumpJoinPoint(pjp);
         
         Object returnValue = pjp.proceed(pjp.getArgs());
